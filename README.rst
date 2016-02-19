@@ -1,6 +1,9 @@
 Nested Sampling
 ---------------
 
+.. image:: https://travis-ci.org/smcantab/nested_sampling.svg?branch=master
+    :target: https://travis-ci.org/smcantab/nested_sampling
+
 Source code: https://github.com/js850/nested_sampling
 
 Documentation: http://js850.github.io/nested_sampling
