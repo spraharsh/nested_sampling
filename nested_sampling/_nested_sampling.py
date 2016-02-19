@@ -97,7 +97,8 @@ class NestedSampling(object):
         in parallel
     """
     def __init__(self, replicas, mc_walker, stepsize=0.1, nproc=1, verbose=True,
-                  max_stepsize=0.5, iprint=1, cpfile=None, cpfreq=10000, cpstart = False, dispatcher_URI=None, serializer='pickle'):
+                 max_stepsize=0.5, target_acc_ratio=0.3, iprint=1, cpfile=None,
+                 cpfreq=10000, cpstart = False, dispatcher_URI=None, serializer='pickle'):
         self.nproc = nproc
         self.verbose = verbose
         self.iprint = iprint
@@ -107,6 +108,7 @@ class NestedSampling(object):
         self.mc_walker = mc_walker
         self.stepsize = stepsize
         self.max_stepsize = max_stepsize
+        self.target_acc_ratio = target_acc_ratio
         self.cpfreq = cpfreq
         self.cpfile = cpfile
         self.cpstart = cpstart
@@ -125,13 +127,11 @@ class NestedSampling(object):
             print "nreplicas", len(self.replicas)
             sys.stdout.flush()
 
-        
         if self.nproc > 1:
             if dispatcher_URI is not None:
                 self._set_up_serializer()
             else:
                 self._set_up_multiproc_parallelization()
-        assert not (dispatcher_URI is None and self.nproc>1), "using only 1 core with active dispatcher" 
     
     #===========================================================================
     # multiprocessing functions for cpu locked parallelisation (on single node)
@@ -323,10 +323,10 @@ class NestedSampling(object):
 #                    testenergy = self.system.get_energy(r.x)
 #                    assert np.abs(testenergy - r.energy) < 1e-5
                     
-        self.adjust_step_size(results)
+        self.adjust_step_size(results, target_ratio=self.target_acc_ratio)
         return rnewlist
     
-    def adjust_step_size(self, results):
+    def adjust_step_size(self, results, target_ratio=0.5):
         """
         Adjust the stepsize to keep the acceptance ratio at a good value
 
@@ -340,7 +340,6 @@ class NestedSampling(object):
         """
         if self.stepsize is None: return
         f = 0.8
-        target_ratio = 0.5
         max_stepsize = self.max_stepsize # these should to be passed
         naccept = sum(m.naccept for m in results)
         nsteps = sum(m.nsteps for m in results)

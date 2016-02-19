@@ -1,0 +1,51 @@
+language: python
+python:
+  - "2.7"
+
+virtualenv:
+  system_site_packages: true
+
+branches:
+  only:
+    - master
+
+before_install:
+  # Use miniconda and conda packages to speed up dependency setup (principally 
+  # borrowed from https://gist.github.com/dan-blanchard/7045057
+  # and https://github.com/Jorge-C/ordination/blob/master/.travis.yml
+  - sudo apt-get update -qq
+  - sudo apt-get install -qq libatlas-dev libatlas-base-dev liblapack-dev gfortran lcov
+  - gem install coveralls-lcov
+  - wget http://repo.continuum.io/miniconda/Miniconda-latest-Linux-x86_64.sh -O miniconda.sh
+  - chmod +x miniconda.sh
+  - ./miniconda.sh -b -p $HOME/miniconda
+  - export PATH="$HOME/miniconda/bin:$PATH"
+  # Update conda itself
+  - hash -r
+  - conda config --set always_yes yes --set changeps1 no
+  - conda update -q conda
+  # Useful for debugging any issues with conda
+  - conda info -a
+  # matplotlib needs a DISPLAY
+  - "export DISPLAY=:99.0"
+  - "sh -e /etc/init.d/xvfb start"
+
+install:
+  - conda create --yes -n nsenv python=$TRAVIS_PYTHON_VERSION nose pip cython numpy scipy matplotlib
+  - source activate nsenv
+  - pip install munkres hungarian pyro4 brewer2mpl coverage coveralls coveralls-merge mpi4py 
+  # download and install nested sampling
+  - pwd
+  - cd $HOME/build/nested-sampling
+  - git clone https://github.com/smcantab/nested_sampling.git
+  - cd nested_sampling
+  - python setup.py build
+  - python setup.py install
+  - cp .coveragerc $HOME
+  - sourcedir=$PWD
+
+script:
+  # avoid running in the checkout directory so nose finds built modules..
+  - rundir=$HOME
+  - cd $rundir
+  - nosetests -v --with-coverage nested_sampling

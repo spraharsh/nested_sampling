@@ -50,13 +50,17 @@ class TestNS(unittest.TestCase):
         self.assert_(self.ns.stepsize != self.stepsize)
         self.assertEqual(len(self.ns.max_energies), self.niter * self.nproc)
 
+
 class testNSParMultiproc(TestNS):
     def setUp(self):
-        self.setUp1(nproc=3)
+        self.setUp1(nproc=3, multiproc=True)
 
-class testNSParPyro(TestNS):
-    def setUp(self):
-        self.setUp1(nproc=3,multiproc=False)
+
+# commented out because it requires launching the dispatcher separately
+# could be done using subprocess, TO DO
+# class testNSParPyro(TestNS):
+#     def setUp(self):
+#         self.setUp1(nproc=3, multiproc=False)
     
 if __name__ == "__main__":
     unittest.main()  
