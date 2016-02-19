@@ -38,9 +38,8 @@ install:
   - python setup.py build
   - python setup.py install
   - cp .coveragerc $HOME
-  - sourcedir=$PWD
+  - pwd
 
 script:
-  - export PYTHONPATH=$PWD:$PYTHONPATH
   - cd $HOME
   - nosetests -v --with-coverage nested_sampling

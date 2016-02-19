@@ -14,13 +14,12 @@ setup(
     url="https://github.com/js850/nested_sampling",
     #cmdclass = {'build_ext': build_ext},
     packages=["nested_sampling",
-              "nested_sampling.src",
               "nested_sampling.models",
               "nested_sampling.utils",
              ],
     ext_modules= 
         [
-            Extension("nested_sampling.src.cv_trapezoidal", ["nested_sampling/src/cv_trapezoidal.c", "nested_sampling/src/cv.c"],
+            Extension("nested_sampling.utils.cv_trapezoidal", ["source/cv_trapezoidal.c", "source/cv.c"],
                       include_dirs=[numpy_include],
                       extra_compile_args = ['-Wextra','-pedantic','-funroll-loops','-O3'],
                         ),

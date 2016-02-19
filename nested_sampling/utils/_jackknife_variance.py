@@ -1,9 +1,12 @@
 from __future__ import division
-import argparse
-import numpy as np
+
 import copy
-from ..src.cv_trapezoidal import compute_cv_c
 from itertools import chain
+
+import numpy as np
+
+from nested_sampling.utils import compute_cv_c
+
 
 def run_jackknife_variance(energies, nsubsets, K, Tmin, Tmax, nT, P, ndof, block, live):
     """

@@ -1,6 +1,6 @@
 from collections import namedtuple
 
-from nested_sampling.src.cv_trapezoidal import compute_cv_c
+from nested_sampling.utils import compute_cv_c
 
 
 def compute_heat_capacity(energies, nreplicas, npar=1, ndof=0, Tmin=.1, Tmax=1., nT=100, live_replicas=False):
