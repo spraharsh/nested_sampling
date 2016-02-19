@@ -16,6 +16,7 @@ setup(
     packages=["nested_sampling",
               "nested_sampling.models",
               "nested_sampling.utils",
+              "nested_sampling.tests",
              ],
     ext_modules= 
         [
