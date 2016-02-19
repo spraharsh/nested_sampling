@@ -34,11 +34,7 @@ install:
   - conda create --yes -n nsenv python=$TRAVIS_PYTHON_VERSION nose pip cython numpy scipy matplotlib
   - source activate nsenv
   - pip install pyro4 brewer2mpl coverage coveralls coveralls-merge 
-  # download and install nested sampling
-  - pwd
-  - cd $HOME/build/smcantab
-  - git clone https://github.com/smcantab/nested_sampling.git
-  - cd nested_sampling
+  # install nested sampling
   - python setup.py build
   - python setup.py install
   - cp .coveragerc $HOME

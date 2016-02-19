@@ -42,51 +42,51 @@ def remove_energies(fout, Emax):
 
 
 def write_energies(fout, max_energies, isave=0):
-    fout.write( "\n".join([ str(e) for e in max_energies[isave:]]) )
+    fout.write("\n".join([str(e) for e in max_energies[isave:]]))
     fout.write("\n")
 
 
-def run_nested_sampling(ns, label="ns_out", etol=0.01, maxiter=None,
-                           iprint_replicas=1000):
+def run_nested_sampling(ns, label="ns_out", etol=0.01, maxiter=None):
     isave = 0
-    i = 0
+    counter = 0
     
     print "nreplicas", len(ns.replicas)
     
-    if ns.cpfile == None:
+    if ns.cpfile is None:
         fout_replicas_name = label + ".replicas.p"
     else:
         fout_replicas_name = ns.cpfile
     
     fout_energies_file = label+".energies"
     
-    if ns.cpstart == True:
+    if ns.cpstart is True:
         fout_energies = open(fout_energies_file, "ab")
     else:
         fout_energies = open(fout_energies_file, "wb")
     
     while True:
         #start from checkpoint binary file?
-        if ns.cpstart == True and i == 0 :
+        if ns.cpstart is True and counter == 0:
             load_checkpoint(fout_replicas_name, ns)
             remove_energies(fout_energies_file, ns.replicas[-1].energy)
         
         ediff = ns.replicas[-1].energy - ns.replicas[0].energy
 
         # save max energies to a file
-        if i != 0 and i % 100 == 0:
+        if counter != 0 and counter % 100 == 0:
             write_energies(fout_energies, ns.max_energies, isave=isave)
             isave = len(ns.max_energies)
         
         #pickle current replicas and write them to a file current replicas to a file
-        cpfreq = ns.cpfreq
-        if i %  cpfreq == 0:
+        if counter % ns.cpfreq == 0:
             save_replicas_to_binary(fout_replicas_name, ns)
 
-        if ediff < etol: break
-        if maxiter is not None and i >= maxiter: break  
+        if ediff < etol:
+            break
+        if maxiter is not None and counter >= maxiter:
+            break
         ns.one_iteration()
-        i += 1
+        counter += 1
     
     write_energies(fout_energies, ns.max_energies, isave=isave)
     fout_energies.close()
@@ -98,7 +98,6 @@ def run_nested_sampling(ns, label="ns_out", etol=0.01, maxiter=None,
     # save them with highest energy first
     with open(label+".replicas_final", "w") as fout:
         write_energies(fout, [r.energy for r in reversed(ns.replicas)]) 
-    
 
     print "min replica energy", ns.replicas[0].energy
     print "max replica energy", ns.replicas[-1].energy
