@@ -20,7 +20,7 @@ setup(
              ],
     ext_modules= 
         [
-            Extension("nested_sampling.utils.cv_trapezoidal", ["source/cv_trapezoidal.c", "source/cv.c"],
+            Extension("nested_sampling.utils.cv_trapezoidal", ["nested_sampling/utils/cv_trapezoidal.c", "source/cv.c"],
                       include_dirs=[numpy_include],
                       extra_compile_args = ['-Wextra','-pedantic','-funroll-loops','-O3'],
                         ),
