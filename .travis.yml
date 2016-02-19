@@ -33,9 +33,8 @@ before_install:
 install:
   - conda create --yes -n nsenv python=$TRAVIS_PYTHON_VERSION nose pip cython numpy scipy matplotlib
   - source activate nsenv
-  - pip install munkres hungarian pyro4 brewer2mpl coverage coveralls coveralls-merge mpi4py 
+  - pip install pyro4 brewer2mpl coverage coveralls coveralls-merge 
   # download and install nested sampling
-  - pwd
   - cd $HOME/build/nested-sampling
   - git clone https://github.com/smcantab/nested_sampling.git
   - cd nested_sampling
