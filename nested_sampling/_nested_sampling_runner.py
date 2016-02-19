@@ -10,11 +10,13 @@ def save_replicas_to_binary(fout, ns):
     checkpoint['iter_number'] = ns.iter_number
     checkpoint['failed_mc_walks'] = ns.failed_mc_walks
     checkpoint['_mc_niter'] = ns._mc_niter
-    pickle.dump( checkpoint, open(fout,"wb"), pickle.HIGHEST_PROTOCOL)
-    
+    pickle.dump(checkpoint, open(fout,"wb"), pickle.HIGHEST_PROTOCOL)
+
+
 def load_replicas_from_binary(fin):
     checkpoint = pickle.load(open(fin, "rb"))
     return checkpoint
+
 
 def load_checkpoint(fin, ns):
     checkpoint = load_replicas_from_binary(fin)
@@ -23,6 +25,7 @@ def load_checkpoint(fin, ns):
     ns.iter_number = copy.deepcopy(checkpoint['iter_number'])
     ns.failed_mc_walks = copy.deepcopy(checkpoint['failed_mc_walks'])
     ns._mc_niter = copy.deepcopy(checkpoint['_mc_niter'])
+
 
 def remove_energies(fout, Emax):
     temp_file = open(fout,'rb')
@@ -36,6 +39,7 @@ def remove_energies(fout, Emax):
     temp_file = open(fout, 'wb')
     temp_file.writelines(temp_energies)
     temp_file.close()
+
 
 def write_energies(fout, max_energies, isave=0):
     fout.write( "\n".join([ str(e) for e in max_energies[isave:]]) )

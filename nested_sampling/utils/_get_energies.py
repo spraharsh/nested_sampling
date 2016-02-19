@@ -1,16 +1,19 @@
 import numpy as np
 
+
 def file_len(fname):
     with open(fname) as f:
         for i, val in enumerate(f):
             pass
     return i + 1
 
+
 def read_line(fname, eall):
     with open(fname) as f:
         for i, val in enumerate(f):
             eall[i] = val
-            
+
+
 def getfromtext(fname):
     print 'linecounting...'
     linecount = file_len(fname)
@@ -19,6 +22,7 @@ def getfromtext(fname):
     print 'reading energies'
     read_line(fname,e)
     return e
+
 
 def get_energies(fnames, block=False, live=False):
     """read energies from a list of file names, append the live replicas and return as one list

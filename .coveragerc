@@ -1,0 +1,11 @@
+[run]
+branch = True
+source  = nested_sampling
+include = */nested_sampling/*
+[report]
+exclude_lines =
+    pragma: no cover
+    raise AssertionError
+    raise NotImplementedError
+    if __name__ == .__main__.:
+    if False
