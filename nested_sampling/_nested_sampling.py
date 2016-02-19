@@ -338,7 +338,8 @@ class NestedSampling(object):
         (new-step-size = old-step-size/f, where 0<f<1), although this is
         increased with an upper bound: max_stepsize.
         """
-        if self.stepsize is None: return
+        if self.stepsize is None:
+            return
         f = 0.8
         max_stepsize = self.max_stepsize # these should to be passed
         naccept = sum(m.naccept for m in results)

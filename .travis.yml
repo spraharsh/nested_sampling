@@ -41,7 +41,4 @@ install:
   - sourcedir=$PWD
 
 script:
-  # avoid running in the checkout directory so nose finds built modules..
-  - rundir=$HOME
-  - cd $rundir
-  - nosetests -v --with-coverage nested_sampling
+  - nosetests -v --with-coverage
