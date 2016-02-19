@@ -1,8 +1,11 @@
-Nested Sampling
----------------
-
 .. image:: https://travis-ci.org/smcantab/nested_sampling.svg?branch=master
     :target: https://travis-ci.org/smcantab/nested_sampling
+    
+.. image:: https://coveralls.io/repos/github/smcantab/nested_sampling/badge.svg?branch=master 
+    :target: https://coveralls.io/github/smcantab/nested_sampling?branch=master
+    
+Nested Sampling
+---------------
 
 Source code: https://github.com/js850/nested_sampling
 
