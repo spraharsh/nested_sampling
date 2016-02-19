@@ -41,4 +41,6 @@ install:
   - sourcedir=$PWD
 
 script:
-  - nosetests -v --with-coverage
+  - export PYTHONPATH=$PWD:$PYTHONPATH
+  - cd $HOME
+  - nosetests -v --with-coverage nested_sampling

@@ -344,7 +344,7 @@ class NestedSampling(object):
         max_stepsize = self.max_stepsize # these should to be passed
         naccept = sum(m.naccept for m in results)
         nsteps = sum(m.nsteps for m in results)
-        ratio = float(naccept) / nsteps  
+        ratio = float(naccept) / nsteps
         
         if ratio < target_ratio:
             # reduce step size
