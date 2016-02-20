@@ -42,7 +42,7 @@ install:
 
 script:
   - cd $HOME
-  - nosetests -v --with-coverage nested_sampling
+  - nosetests -v --with-coverage --cover-package=nested_sampling
 
 after_success:
   - coveralls
