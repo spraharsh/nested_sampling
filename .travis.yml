@@ -37,12 +37,11 @@ install:
   # install nested sampling
   - python setup.py build
   - python setup.py install
-  - cp .coveragerc $HOME
-  - pwd
 
 script:
   - cd $HOME
   - nosetests -v --with-coverage --cover-package=nested_sampling nested_sampling
 
 after_success:
+  - cd nested_sampling
   - coveralls
