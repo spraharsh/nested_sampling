@@ -43,3 +43,6 @@ install:
 script:
   - cd $HOME
   - nosetests -v --with-coverage nested_sampling
+
+after_success:
+  - coveralls
