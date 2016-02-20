@@ -39,9 +39,11 @@ install:
   - python setup.py install
 
 script:
+  - pwd
   - cd $HOME
+  - pwd
   - nosetests -v --with-coverage --cover-package=nested_sampling nested_sampling
 
 after_success:
-  - cd nested_sampling
+  - cd smcantab/nested_sampling
   - coveralls
