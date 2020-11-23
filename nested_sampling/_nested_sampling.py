@@ -28,7 +28,7 @@ class Replica(object):
     also attached is some additional information
     
     Parameters
-    ----------
+    ----------    
     x : array
         the structural coordinates
     energy : float

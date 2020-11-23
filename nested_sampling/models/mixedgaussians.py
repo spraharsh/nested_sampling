@@ -29,8 +29,8 @@ class MixedGausssian(object):
         # make sure inputs make sense
         assert(len(minimum_coords_list) == len(minimum_depths_list))
         assert(len(minimum_coords_list) == len(minimum_sharpness_list))
-        assert(np.all(minimum_sharpness_list>0))
-        assert(np.all(minimum_depths_list>0))
+        assert(np.all(np.array(minimum_sharpness_list)>0))
+        assert(np.all(np.array(minimum_depths_list)>0))
         
         self.length = len(minimum_coords_list)
         self.minimum_coords_list = np.array(minimum_coords_list)
@@ -38,7 +38,7 @@ class MixedGausssian(object):
         self.minimum_sharpness_list = np.array(minimum_sharpness_list)
         self.ndim = ndim
         
-        assert(minimum_coords_list.shape[1] ==ndim)
+        assert(self.minimum_coords_list.shape[1] ==ndim)
 
     def get_energy(self, x):
         """
@@ -49,10 +49,10 @@ class MixedGausssian(object):
             coordinates
         """
         
-        x_shifted = x- self.minimum_coords_list
+        x_shifted = np.tile(x, (self.length, 1)) - self.minimum_coords_list
         x_shifted_2 = np.einsum('ij,ij->i', x_shifted, x_shifted)
-        # - a_i (exp(-b_i*(x_shifted^2)))
-        return -(self.minimum_depths_list*np.exp(-(self.minimum_sharpness_list*x_shifted_2)))
+        # -sum_i a_i (exp(-b_i*(x_shifted^2)))
+        return -sum(self.minimum_depths_list*np.exp(-(self.minimum_sharpness_list*x_shifted_2)))
 
     def get_random_configuration(self, radius=1.):
         """
