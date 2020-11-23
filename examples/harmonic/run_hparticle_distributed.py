@@ -1,3 +1,4 @@
+from builtins import range
 import argparse
 from nested_sampling import NestedSampling, MonteCarloWalker, Harmonic, run_nested_sampling, Replica
 
@@ -45,7 +46,7 @@ def main():
 
     #initialise replicas (initial uniformly samples set of configurations)
     replicas = []
-    for _ in xrange(nreplicas):
+    for _ in range(nreplicas):
         x = potential.get_random_configuration()
         replicas.append(Replica(x, potential.get_energy(x)))
     

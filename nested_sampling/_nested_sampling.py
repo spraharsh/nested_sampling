@@ -1,9 +1,16 @@
 """classes and routines for running nested sampling"""
+from __future__ import print_function
+from future import standard_library
+standard_library.install_aliases()
+from builtins import zip
+from builtins import str
+from builtins import range
+from builtins import object
 import random
 import numpy as np
 import sys
 import copy
-from itertools import izip
+
 import Pyro4
 import Pyro4.util
 import multiprocessing as mp
@@ -13,7 +20,7 @@ from nested_sampling._mc_walker import MCWalkerParallelWrapper
 try:
     import queue
 except ImportError:
-    import Queue as queue
+    import queue as queue
 
 class Replica(object):
     """object to represent the state of a system
@@ -124,7 +131,7 @@ class NestedSampling(object):
         self.dispatcher_URI = dispatcher_URI
                 
         if self.verbose:
-            print "nreplicas", len(self.replicas)
+            print("nreplicas", len(self.replicas))
             sys.stdout.flush()
 
         if self.nproc > 1:
@@ -141,7 +148,7 @@ class NestedSampling(object):
         #initialize the parallel workers to do the Monte Carlo Walk
         self.connlist = []
         self.workerlist = []
-        for _ in xrange(self.nproc):
+        for _ in range(self.nproc):
             parent_conn, child_conn = mp.Pipe()
             worker = MCWalkerParallelWrapper(child_conn, self.mc_walker)
             worker.daemon = True
@@ -152,8 +159,8 @@ class NestedSampling(object):
     def _do_monte_carlo_chain_parallel_multiproc(self, configs, Emax):
         """run all the monte carlo walkers in parallel"""
         # pass the workers the starting configurations for the MC walk
-        for conn, r in izip(self.connlist, configs):
-            seed = np.random.randint(0, sys.maxint)
+        for conn, r in zip(self.connlist, configs):
+            seed = np.random.randint(0, sys.maxsize)
             message = ("do mc", r.x, self.stepsize, Emax, r.energy, seed)
             conn.send(message)
 
@@ -161,7 +168,7 @@ class NestedSampling(object):
         results = [conn.recv() for conn in self.connlist]
         
         # update the replicas
-        for r, mc in izip(configs, results):
+        for r, mc in zip(configs, results):
             r.x = mc.x
             r.energy = mc.energy
             r.niter += mc.nsteps
@@ -170,8 +177,8 @@ class NestedSampling(object):
         # print some data
         if self.verbose and self.iter_number % self.iprint == 0:
             accrat = float(sum(mc.naccept for mc in results))/ sum(mc.nsteps for mc in results)
-            print "step:", self.iter_number, "%accept", accrat, "Emax", Emax, "Emin", self.replicas[0].energy, \
-                "stepsize", self.stepsize
+            print("step:", self.iter_number, "%accept", accrat, "Emax", Emax, "Emin", self.replicas[0].energy, \
+                "stepsize", self.stepsize)
 
         return configs, results
     
@@ -205,9 +212,9 @@ class NestedSampling(object):
     
         if self.dispatcher.resultQueueSize() > 0:
             print("there's still stuff in the dispatcher result queue, that is odd...")
-            print "queue size", self.dispatcher.resultQueueSize()
+            print("queue size", self.dispatcher.resultQueueSize())
         
-        for key in sorted(results.iterkeys()):
+        for key in sorted(results.keys()):
             results_list.append(results[key])
             
         return results_list
@@ -215,8 +222,8 @@ class NestedSampling(object):
     def _do_monte_carlo_chain_parallel_distributed(self, configs, Emax):
         """run all the monte carlo walkers in parallel"""
         
-        for i in xrange(len(configs)):
-            seed = np.random.randint(0, sys.maxint)
+        for i in range(len(configs)):
+            seed = np.random.randint(0, sys.maxsize)
             replica = configs[i]
             #crete item to be put in the queue
             item = Forwarditem(replica, Emax, self.stepsize, seed, i)
@@ -227,7 +234,7 @@ class NestedSampling(object):
         results = self.collectresults()
                 
         # update the replicas
-        for r, mc in izip(configs, results):
+        for r, mc in zip(configs, results):
             r.x = mc.x
             r.energy = mc.energy
             r.niter += mc.nsteps
@@ -235,8 +242,8 @@ class NestedSampling(object):
         # print some data
         if self.verbose and self.iter_number % self.iprint == 0:
             accrat = float(sum(mc.naccept for mc in results))/ sum(mc.nsteps for mc in results)
-            print "step:", self.iter_number, "%accept", accrat, "Emax", Emax, "Emin", self.replicas[0].energy, \
-                "stepsize", self.stepsize
+            print("step:", self.iter_number, "%accept", accrat, "Emax", Emax, "Emin", self.replicas[0].energy, \
+                "stepsize", self.stepsize)
 
         return configs, results
 
@@ -256,7 +263,7 @@ class NestedSampling(object):
         """do the monte carlo walk"""
         assert self.nproc == 1
         rsave = r.copy()
-        seed = np.random.randint(0, sys.maxint)
+        seed = np.random.randint(0, sys.maxsize)
         
         # do the monte carlo walk
         result = self.mc_walker(r.x, self.stepsize, Emax, r.energy, seed)
@@ -270,9 +277,9 @@ class NestedSampling(object):
         if self.verbose and self.iter_number % self.iprint == 0:
             # print some data
             dist = np.linalg.norm(result.x - rsave.x)
-            print "step:", self.iter_number, "%accept", float(result.naccept) / result.nsteps, \
+            print("step:", self.iter_number, "%accept", float(result.naccept) / result.nsteps, \
                 "Enew", result.energy, "Eold", rsave.energy, "Emax", Emax, "Emin", self.replicas[0].energy, \
-                "stepsize", self.stepsize, "distance", dist #, "%reject_config", float(result.nreject_config) / result.nsteps, result.nsteps - result.naccept 
+                "stepsize", self.stepsize, "distance", dist) #, "%reject_config", float(result.nreject_config) / result.nsteps, result.nsteps - result.naccept 
 
         return r, result
 
@@ -295,7 +302,7 @@ class NestedSampling(object):
 
         self._mc_niter += sum((result.nsteps for result in results))
 
-        for result, r in izip(results, configs):
+        for result, r in zip(results, configs):
             if result.naccept == 0:
                 self.failed_mc_walks += 1
 #                sys.stderr.write("WARNING: zero steps accepted in the Monte Carlo chain\n")
@@ -366,7 +373,7 @@ class NestedSampling(object):
         remove the replicas with the largest energies and store them in the max_energies array 
         """
         # pull out the replicas with the largest energy
-        for i in xrange(self.nproc):
+        for i in range(self.nproc):
             r = self.replicas.pop()
             if i == 0 or self.store_all_energies:
                 self.max_energies.append(r.energy)

@@ -1,3 +1,6 @@
+from __future__ import print_function
+from __future__ import division
+from past.utils import old_div
 import numpy as np
 
 
@@ -15,11 +18,11 @@ def read_line(fname, eall):
 
 
 def getfromtext(fname):
-    print 'linecounting...'
+    print('linecounting...')
     linecount = file_len(fname)
-    print 'pre-allocating memory...'
+    print('pre-allocating memory...')
     e = np.zeros(linecount)
-    print 'reading energies'
+    print('reading energies')
     read_line(fname,e)
     return e
 
@@ -44,7 +47,7 @@ def get_energies(fnames, block=False, live=False):
                     if i%2 is 0:
                         eall.append(e)
                     else:
-                        j = i/2
+                        j = old_div(i,2)
                         eall[j] = np.hstack((eall[j],e))
             i+=1
         if block is False:

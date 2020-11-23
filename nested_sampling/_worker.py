@@ -1,3 +1,7 @@
+from __future__ import print_function
+from future import standard_library
+standard_library.install_aliases()
+from builtins import object
 import sys
 import Pyro4
 import Pyro4.util
@@ -6,7 +10,7 @@ import socket
 try:
     import queue
 except ImportError:
-    import Queue as queue
+    import queue as queue
 from nested_sampling import Forwarditem
 import uuid
 
@@ -18,7 +22,7 @@ class pyro_worker(object):
         if host==None:
             hostname = socket.gethostname()
             self.host = Pyro4.socketutil.getIpAddress(hostname, workaround127=True)
-            print "host IP address was found to be {0}".format(self.host)
+            print("host IP address was found to be {0}".format(self.host))
         else:
             self.host = host
         
@@ -47,7 +51,7 @@ class pyro_worker(object):
         Pyro4.config.SERVERTYPE=self.server_type
         
         self.dispatcher = Pyro4.Proxy(self.dispatcher_URI)
-        print "This is worker {0}".format(self.worker_name)
+        print("This is worker {0}".format(self.worker_name))
         print("getting work from dispatcher.")
         
         while True:

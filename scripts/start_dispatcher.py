@@ -1,3 +1,5 @@
+from __future__ import print_function
+from builtins import str
 from nested_sampling import DispatcherQueue
 import argparse
 import sys
@@ -25,7 +27,7 @@ def main():
     
     daemon = Pyro4.Daemon(host=host,port=args.port)
     dispatcher_uri = daemon.register(DispatcherQueue(),objectId=args.server_name)
-    print str(dispatcher_uri)
+    print(str(dispatcher_uri))
     
     with open('dispatcher_uri.dat','w+') as out_dispatcher_uri:
         out_dispatcher_uri.write(str(dispatcher_uri))

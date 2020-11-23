@@ -140,6 +140,8 @@ void log_weights(double* El, double* gl, double* wl, int N, double T)
     }
 }
 
+
+
 ////////////////////////////caclulate heat capacity for a single T////////////////////////
 double heat_capacity(double* El, double* wl, int N, double T, double ndof, double * U, double * U2)
 {

@@ -1,6 +1,9 @@
+from __future__ import print_function
+from builtins import zip
+from builtins import range
 import argparse
 import numpy as np
-from itertools import izip, chain
+from itertools import chain
 from nested_sampling import compute_heat_capacity,run_jackknife_variance, run_alpha_variance, get_energies
 
 def main():   
@@ -22,8 +25,8 @@ def main():
                                                 "while multiple sets are used as they are. To set B true, all sets must have the same K", default=False)
     parser.add_argument("-n", type=int, default=0, help="if --B=0 determine the number of subsets in which you want to split the data ")
     args = parser.parse_args()
-    print args.fname
-    print args
+    print(args.fname)
+    print(args)
     
     #===========================================================================
     # determine the number of subsets in which to split the data
@@ -33,7 +36,7 @@ def main():
         nsubsets = len(args.fname)
         if args.live is True:
             nsubsets /= 2
-            print "nsubsets=",nsubsets
+            print("nsubsets=",nsubsets)
     else:
         nsubsets = args.n        
         
@@ -41,7 +44,7 @@ def main():
     # read in the energies
     #===========================================================================
     energies = get_energies(args.fname, args.B, args.live)
-    print "energies size", np.size(energies)
+    print("energies size", np.size(energies))
     
     #===========================================================================
     # generate a merged set of energies to compute an unbiased estimate of the heat capacity
@@ -52,9 +55,9 @@ def main():
     else:
         energies_merged = energies
     
-    print "parallel nprocessors", args.P
-    print "replicas", args.K
-    print "error analysis method: ",args.stdev
+    print("parallel nprocessors", args.P)
+    print("replicas", args.K)
+    print("error analysis method: ",args.stdev)
     
     #make nd-arrays C contiguous # js850> this will already be the case 
     #energies = np.array(energies, order='C')
@@ -84,7 +87,7 @@ def main():
     #print just the average estimate of thermodynamic quantities
     with open(args.o+".dat", "w") as fout:
         fout.write("#T Cv <E> <E^2>\n")
-        for vals in izip(T, Cv, U, U2):
+        for vals in zip(T, Cv, U, U2):
             fout.write("%.16g %.16g %.16g %.16g\n" % vals)
 
     if args.stdev is not "none":
@@ -102,7 +105,7 @@ def main():
         
         #single jackknife heat capacity curves
         with open('{o}_{m}_singles_K{K}_Nsub{n}_d{ndof}_B{B}.dat'.format(o=args.o,m=args.stdev,K = args.K,n=nsubsets,ndof=args.ndof,B=args.B), "w") as fout:
-            for i in xrange(nsubsets):
+            for i in range(nsubsets):
                 fout.write("#T Cv\n")
                 for vals in zip(T, Cv_singles[i]):
                     fout.write("%g %g \n" % vals)
@@ -143,7 +146,7 @@ def main():
         fig.savefig('{o}_{m}_variance_est_K{K}_Nsub{n}_d{ndof}.pdf'.format(o=args.o,m=args.stdev,K = args.K,n=nsubsets,ndof=args.ndof))
         
         plt.figure()
-        for i in xrange(nsubsets):
+        for i in range(nsubsets):
             plt.plot(T, Cv_singles[i])
         plt.xlabel("T")
         plt.ylabel("Cv")

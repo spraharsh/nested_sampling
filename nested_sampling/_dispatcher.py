@@ -3,10 +3,13 @@
 #===============================================================================
 
 from __future__ import print_function
+from future import standard_library
+standard_library.install_aliases()
+from builtins import object
 try:
     import queue
 except ImportError:
-    import Queue as queue
+    import queue as queue
 import Pyro4
 
 class DispatcherQueue(object):

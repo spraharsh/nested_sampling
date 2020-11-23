@@ -1,11 +1,13 @@
+from builtins import range
 import argparse
 
 from nested_sampling import NestedSampling, MonteCarloWalker, Harmonic, run_nested_sampling, Replica
+from nested_sampling.utils.cv_trapezoidal import compute_cv_c
 
 def main():
     parser = argparse.ArgumentParser(description="do nested sampling on a p[article in a n-dimensional Harmonic well")
-    parser.add_argument("-K", "--nreplicas", type=int, help="number of replicas", default=300)
-    parser.add_argument("-A", "--ndof", type=int, help="number of degrees of freedom", default=4)
+    parser.add_argument("-K", "--nreplicas", type=float, help="number of replicas", default=1e4)
+    parser.add_argument("-A", "--ndof", type=int, help="number of degrees of freedom", default=3)
     parser.add_argument("-P", "--nproc", type=int, help="number of processors", default=1)
     parser.add_argument("-N", "--nsteps", type=int, help="number of MC steps per NS iteration", default=100)
     parser.add_argument("--stepsize", type=float, help="stepsize, adapted between NS iterations", default=0.1)
@@ -17,7 +19,7 @@ def main():
     ndof = args.ndof
     nproc = args.nproc
     nsteps = args.nsteps
-    nreplicas = args.nreplicas
+    nreplicas = int(args.nreplicas)
     stepsize = args.stepsize
     etol = args.etol
     
@@ -29,7 +31,7 @@ def main():
 
     #initialise replicas (initial uniformly samples set of configurations)
     replicas = []
-    for _ in xrange(nreplicas):
+    for _ in range(nreplicas):
         x = potential.get_random_configuration()
         replicas.append(Replica(x, potential.get_energy(x)))
     

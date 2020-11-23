@@ -1,3 +1,9 @@
+from __future__ import print_function
+from __future__ import division
+from builtins import input
+from builtins import range
+from past.utils import old_div
+from builtins import object
 import matplotlib.pyplot as plt
 from mpl_toolkits.mplot3d import Axes3D
 #from matplotlib.ticker import LinearLocator, FormatStrFormatter
@@ -10,6 +16,7 @@ import bisect
 from nested_sampling import NestedSampling, MonteCarloWalker, Replica
 from nested_sampling.utils.rotations import vector_random_uniform_hypersphere
 from scipy.optimize import Result
+from functools import reduce
 
     
 
@@ -28,12 +35,12 @@ def do_nested_sampling(nreplicas=10, niter=200, mciter=1000, stepsize=.8, estop=
             path.append(coords)
 
     p = Pot()
-    print p.get_energy(np.array([1,2.]))
+    print(p.get_energy(np.array([1,2.])))
     mc_walker = MonteCarloWalker(p, mciter=mciter, events=[mc_record_position_event])
     
     # initialize the replicas with random positions
     replicas = []
-    for i in xrange(nreplicas):
+    for i in range(nreplicas):
         # choose points uniformly in a circle
         if circle: 
             coords = vector_random_uniform_hypersphere(2) * r0 + x0
@@ -49,7 +56,7 @@ def do_nested_sampling(nreplicas=10, niter=200, mciter=1000, stepsize=.8, estop=
     ns = NestedSampling(replicas, mc_walker, stepsize=stepsize)
     results = [Result()]
     results[0].replicas = [r.copy() for r in replicas]
-    for i in xrange(niter):
+    for i in range(niter):
         ns.one_iteration()
         new_res = Result()
         new_res.replicas = [r.copy() for r in replicas]
@@ -73,7 +80,7 @@ def do_nested_sampling(nreplicas=10, niter=200, mciter=1000, stepsize=.8, estop=
 
 def ig(x, y, x0, y0, sigx, sigy):
     """inverse gausian"""
-    return np.exp(-( ((x-x0)/sigx)**2 + ((y-y0)/sigy)**2 ))
+    return np.exp(-( (old_div((x-x0),sigx))**2 + (old_div((y-y0),sigy))**2 ))
 
 def f1(x, y):
     z = -1. *   ig(x, y, 0, 0, .3, .3)
@@ -93,7 +100,7 @@ def f2(x, y):
 def styblinski_tang(x, y):
     e1 = x**4 + 16*x**2 + 5*x
     e2 = y**4 + 16*y**2 + 5*y
-    return (e1 + e2) / 2
+    return old_div((e1 + e2), 2)
 
 f = f2
 
@@ -130,7 +137,7 @@ class NSViewer(object):
         self.X, self.Y = np.meshgrid(self.X, self.Y)
         self.Z = f(self.X, self.Y)
         self.zmin = np.min(self.Z)
-        print "zmin", self.zmin
+        print("zmin", self.zmin)
         self.zmax = 0
         self.vmax = self.Z.max() + .05
         self._pause_count = 0
@@ -277,18 +284,18 @@ class NSViewer(object):
     def get_exact_dos(self):
         N = len(self.Zlinear_sorted)
         V = N-1-self.sidebar_e_to_index(self.ns.max_energies[0])
-        print self.ns.max_energies[0], self.Zlinear_sorted[V]
+        print(self.ns.max_energies[0], self.Zlinear_sorted[V])
         K = float(len(self.ns.replicas))
         n = len(self.ns.max_energies)
         self.better_dos = Result()
-        self.better_dos.energies = [ self.Zlinear_sorted[np.round(V * (K/(K+1))**i)] for i in xrange(n)]
+        self.better_dos.energies = [ self.Zlinear_sorted[np.round(V * (old_div(K,(K+1)))**i)] for i in range(n)]
         self.better_dos.dos = self.compute_dos(len(self.better_dos.energies))
         
         # also make some random dos versions
         self.better_dos.random_energies = []
-        for i in xrange(20):
+        for i in range(20):
             alphas = np.random.beta(K,1, size=n-1)
-            elist = [ self.Zlinear_sorted[np.round(V * prod(alphas[:i]))] for i in xrange(1,n)]
+            elist = [ self.Zlinear_sorted[np.round(V * prod(alphas[:i]))] for i in range(1,n)]
             elist.insert(0, self.Zlinear_sorted[np.round(V)])
             self.better_dos.random_energies.append(elist)
             
@@ -296,8 +303,8 @@ class NSViewer(object):
 
     def compute_dos(self, niter):
         K = float(len(self.ns.replicas))
-        dos = [1./(K+1) * (K/(K+1))**i 
-                    for i in xrange(niter)]
+        dos = [1./(K+1) * (old_div(K,(K+1)))**i 
+                    for i in range(niter)]
 #        if self.better_dos is not None:
 #            self.better_dos.dos = np.array(self.better_dos.dos)
 #            self.better_dos.dos *= len(self.better_dos.energies) / len(self.dos)
@@ -326,7 +333,7 @@ class NSViewer(object):
             plt.pause(.03)
             return
         plt.pause(.05)
-        n = raw_input("press any key to continue. enter a number to skip future pauses")
+        n = input("press any key to continue. enter a number to skip future pauses")
         if n == "q":
             raise Exception("quitting")
         try:
@@ -344,7 +351,7 @@ class NSViewer(object):
     
     def run(self):
         plt.ion()
-        for i in xrange(len(self.results)-1):
+        for i in range(len(self.results)-1):
             self.plot_background()
             self.plot_contours_old(i)
             if i == 0:
@@ -362,7 +369,7 @@ class NSViewer(object):
             self.plot_mc_path(i)
             if self.show_dos:
                 self.plot_dos(i)
-            print "finishing iteration", i
+            print("finishing iteration", i)
             self.pause()
         plt.show(block=True)
 
@@ -454,7 +461,7 @@ def main2():
     xlim = [-4, 3]
     ylim = [-3, 4]
     x0 = [np.mean(xlim), np.mean(ylim)]
-    r0 = np.abs(xlim[1] - xlim[0]) / 2
+    r0 = old_div(np.abs(xlim[1] - xlim[0]), 2)
     nreplicas = 15
     niter = 100
         

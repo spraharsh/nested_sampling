@@ -1,3 +1,6 @@
+from __future__ import print_function
+from builtins import range
+from builtins import object
 import multiprocessing as mp
 
 import numpy as np
@@ -73,7 +76,7 @@ class MonteCarloWalker(object):
             if not self.accept_test(x, 0.):
                 raise Exception("initial configuration for monte carlo chain failed configuration test")
         
-        for i in xrange(self.mciter):
+        for i in range(self.mciter):
             xnew = x.copy()
             
             # displace configuration
@@ -129,6 +132,6 @@ class MCWalkerParallelWrapper(mp.Process):
                 res = self.do_MC(x0, stepsize, Emax, energy, seed)
                 self.conn.send(res)
             else:
-                print "error: unknown message: %s\n%s" % (self.name, message)
+                print("error: unknown message: %s\n%s" % (self.name, message))
 
 

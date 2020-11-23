@@ -1,5 +1,8 @@
 from __future__ import division
+from __future__ import print_function
 
+from builtins import range
+from builtins import object
 import copy
 from itertools import chain
 
@@ -33,13 +36,13 @@ class _jackknife_variance(object):
         self.live = live
     
     def __call__(self):
-        print 'Splitting energies...'
+        print('Splitting energies...')
         Esplit = self.split_energies()
-        print 'Calculating Jacknife averages (combining sets)'
+        print('Calculating Jacknife averages (combining sets)')
         EJack = self.jack_E_averages(Esplit)
-        print 'Producing Cv curves for each subset'
+        print('Producing Cv curves for each subset')
         CvSingle = self.Cv_singles(Esplit)
-        print 'Calculating Cv Jacknife average (from the combination of subsets)'
+        print('Calculating Cv Jacknife average (from the combination of subsets)')
         CvJack = self.jack_Cv_averages(EJack)
         CvMom1 = self.jack_Cv_moments(CvJack)[0]
         sigma = self.jack_Cv_stdev(CvJack) 
@@ -49,13 +52,13 @@ class _jackknife_variance(object):
         """
         split the array of energies into n subsets of size n/K randomly
         """
-        Esplit = [[] for i in xrange(self.nsubsets)]
+        Esplit = [[] for i in range(self.nsubsets)]
         for x in self.E:
             i = np.random.randint(0,self.nsubsets)
             Esplit[i].append(x)
         Esplit = np.array(Esplit)
-        for i in xrange(self.nsubsets):
-            print 'Esplit size',i, 'is',np.size(Esplit[i])
+        for i in range(self.nsubsets):
+            print('Esplit size',i, 'is',np.size(Esplit[i]))
         return Esplit
     
     def split_energies_block(self):
@@ -70,10 +73,10 @@ class _jackknife_variance(object):
         returns the correct type of energy subsets, as chosen by the user
         """
         if self.block == False:
-            print 'splitting energies at random in ',self.nsubsets,' subsets'
+            print('splitting energies at random in ',self.nsubsets,' subsets')
             Esplit = self.split_energies_randomly()
         else:
-            print 'keeping energies as from input'
+            print('keeping energies as from input')
             Esplit = self.split_energies_block()
         return Esplit
     
@@ -81,16 +84,16 @@ class _jackknife_variance(object):
         """
         return array of Jacknife averages (more like combined subsets than averages):    
         """
-        EJack = [[] for i in xrange(self.nsubsets)]
-        for i in xrange(self.nsubsets):
+        EJack = [[] for i in range(self.nsubsets)]
+        for i in range(self.nsubsets):
             EJack_tmp = copy.deepcopy(Esplit)
-            print 'EJack_tmp shape',np.shape(EJack_tmp) 
+            print('EJack_tmp shape',np.shape(EJack_tmp)) 
             EJack_tmp = np.delete(EJack_tmp, i, 0) 
             #EJack_tmp = np.ravel(Esplit,order='F')
             EJack_tmp = [l for l in chain.from_iterable(EJack_tmp)]
-            print np.shape(EJack_tmp)
+            print(np.shape(EJack_tmp))
             EJack[i] = np.sort(EJack_tmp)[::-1]
-        print np.shape(EJack)
+        print(np.shape(EJack))
         EJack = np.array(EJack)
         return EJack
     
@@ -99,7 +102,7 @@ class _jackknife_variance(object):
         returns the M(=self.nsubsets) Cv Jackknife averages (from the combined subsets)
         """
         CvJack = np.zeros((self.nsubsets,self.T.size))
-        for i in xrange(self.nsubsets):
+        for i in range(self.nsubsets):
             T, CvJack[i][:], U, U2 = compute_cv_c(np.array(EJack[i][:]), float(self.P), (self.K - self.n), float(self.Tmin), float(self.Tmax), self.nT, float(self.ndof), self.live)
         #print 'CvJack ',CvJack
         return np.array(CvJack)
@@ -109,7 +112,7 @@ class _jackknife_variance(object):
         returns the single Cvs
         """
         CvSingle = np.zeros((self.nsubsets,self.T.size))
-        for i in xrange(self.nsubsets):
+        for i in range(self.nsubsets):
             T, CvSingle[i][:], U, U2 = compute_cv_c(np.array(Esplit[i][:]), float(self.P), (self.n), float(self.Tmin), float(self.Tmax), self.nT, float(self.ndof), self.live)
         #print 'CvSingle ',CvSingle
         return np.array(CvSingle)
@@ -120,7 +123,7 @@ class _jackknife_variance(object):
         """
         CvMom1 = (float(1)/float(self.nsubsets))*np.sum(CvJack,axis=0)               #first moments (1/self.nsubsets)
         CvMom2 = (float(1)/float(self.nsubsets))*np.sum(np.square(CvJack),axis=0)    #second moments
-        print 'CvMom1',CvMom1,'CvMom2',CvMom2
+        print('CvMom1',CvMom1,'CvMom2',CvMom2)
         return CvMom1, CvMom2
     
     def jack_Cv_stdev(self, CvJack):

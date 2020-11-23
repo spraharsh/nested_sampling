@@ -1,7 +1,11 @@
 """
 a routine to run a nested sampling class
 """
-import cPickle as pickle
+from __future__ import print_function
+from future import standard_library
+standard_library.install_aliases()
+from builtins import str
+import pickle as pickle
 import copy
 
 def save_replicas_to_binary(fout, ns):
@@ -42,15 +46,16 @@ def remove_energies(fout, Emax):
 
 
 def write_energies(fout, max_energies, isave=0):
-    fout.write("\n".join([str(e) for e in max_energies[isave:]]))
-    fout.write("\n")
+    string = ("\n".join([str(e) for e in max_energies[isave:]]))
+    fout.write(string.encode('utf-8'))
+    fout.write(b"\n")
 
 
 def run_nested_sampling(ns, label="ns_out", etol=0.01, maxiter=None):
     isave = 0
     counter = 0
     
-    print "nreplicas", len(ns.replicas)
+    print("nreplicas", len(ns.replicas))
     
     if ns.cpfile is None:
         fout_replicas_name = label + ".replicas.p"
@@ -61,6 +66,7 @@ def run_nested_sampling(ns, label="ns_out", etol=0.01, maxiter=None):
     
     if ns.cpstart is True:
         fout_energies = open(fout_energies_file, "ab")
+        print("are we here")
     else:
         fout_energies = open(fout_energies_file, "wb")
     
@@ -96,11 +102,11 @@ def run_nested_sampling(ns, label="ns_out", etol=0.01, maxiter=None):
 
     # save final replica energies to a file
     # save them with highest energy first
-    with open(label+".replicas_final", "w") as fout:
+    with open(label+".replicas_final", "wb") as fout:
         write_energies(fout, [r.energy for r in reversed(ns.replicas)]) 
 
-    print "min replica energy", ns.replicas[0].energy
-    print "max replica energy", ns.replicas[-1].energy
+    print("min replica energy", ns.replicas[0].energy)
+    print("max replica energy", ns.replicas[-1].energy)
     
     return ns
 

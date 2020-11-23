@@ -1,6 +1,7 @@
+from __future__ import absolute_import
 import unittest
 
-from _test_mc_walker import TestMCWalker
+from ._test_mc_walker import TestMCWalker
 from nested_sampling import Harmonic
 from nested_sampling.models.harmonic_nowalk import HarmonicSampler
 

@@ -1,3 +1,6 @@
+from __future__ import division
+from builtins import range
+from past.utils import old_div
 import numpy as np
 import matplotlib as mpl
 from matplotlib import pylab as plt
@@ -14,7 +17,7 @@ def plots1d(nimages=30, nreplicas=4, with_hist=True, show=True,
         ncol_hist = 0
     ax_list = [plt.subplot2grid((1,nimages+ncol_hist), (0,i), 
                                colspan=1, rowspan=nimages)
-               for i in xrange(nimages)]
+               for i in range(nimages)]
     
     for ax in ax_list:
         ax.set_ylim(0,1)
@@ -37,7 +40,7 @@ def plots1d(nimages=30, nreplicas=4, with_hist=True, show=True,
             
         n = 100000
         rmax = np.random.beta(nreplicas, 1, size=n)
-        ax.hist(rmax, bins=np.sqrt(n)/10, orientation='horizontal', normed=True)
+        ax.hist(rmax, bins=old_div(np.sqrt(n),10), orientation='horizontal', normed=True)
         
         if False:
             y = np.arange(1,0,-.01)

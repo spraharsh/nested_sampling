@@ -1,5 +1,8 @@
 from __future__ import division
+from __future__ import print_function
 
+from builtins import range
+from builtins import object
 import copy
 
 import numpy as np
@@ -55,26 +58,26 @@ class _alpha_variance(object):
         #CvMom1 = self.jack_Cv_moments(CvJack)[0]
         #return self.jack_Cv_stdev(CvJack), CvSingle, CvMom1
         
-        print 'Sampling alphas...'
+        print('Sampling alphas...')
         alpha_sets = self.sample_alphas()
-        print 'Calculating single Cvs'
+        print('Calculating single Cvs')
         CvSingle = self.Cv_singles(alpha_sets)
-        print 'Calculating moments'
+        print('Calculating moments')
         CvMom1, CvMom2 = self.Cv_moments(CvSingle)
-        print 'Calculating standard deviation'
+        print('Calculating standard deviation')
         sigma = np.sqrt(CvMom2 - np.square(CvMom1))
-        print 'Plotting...'
+        print('Plotting...')
         return self.T, sigma, CvSingle, CvMom1
                 
     def make_random_alpha_list(self):
         rn_list = np.zeros(self.N)
         if self.live == 0:
-            for i in xrange(self.N):
+            for i in range(self.N):
                 rn_list[i] = np.random.beta(self.K-(i%int(self.P)),1)
         else:
-            for i in xrange(self.N-self.K):
+            for i in range(self.N-self.K):
                 rn_list[i] = np.random.beta(self.K-(i%int(self.P)),1)
-            for j in xrange(self.K):
+            for j in range(self.K):
                 i +=1
                 rn_list[i] = np.random.beta(self.K-j,1)
         return np.array(rn_list)
@@ -83,13 +86,13 @@ class _alpha_variance(object):
         """
         create nsubsets of sampled compression factors 
         """
-        alpha_sets = [[] for i in xrange(self.nsubsets)]
-        for i in xrange(self.nsubsets):
+        alpha_sets = [[] for i in range(self.nsubsets)]
+        for i in range(self.nsubsets):
             alpha = self.make_random_alpha_list()
             alpha_sets[i] = alpha
         alpha_sets = np.array(alpha_sets)
-        for i in xrange(self.nsubsets):
-            print 'alpha_tot size',i, 'is',np.size(alpha_sets[i])
+        for i in range(self.nsubsets):
+            print('alpha_tot size',i, 'is',np.size(alpha_sets[i]))
         return alpha_sets
     
     def Cv_singles(self,alpha_sets):
@@ -97,7 +100,7 @@ class _alpha_variance(object):
         returns the single Cvs
         """
         CvSingle = np.zeros((self.nsubsets,self.T.size))
-        for i in xrange(self.nsubsets):
+        for i in range(self.nsubsets):
             T, CvSingle[i][:], U, U2 = compute_alpha_cv_c(self.E, np.array(alpha_sets[i][:]), float(self.P), self.K, float(self.Tmin), float(self.Tmax), self.nT, float(self.ndof), self.live)
         #print 'CvSingle ',CvSingle
         return np.array(CvSingle)
@@ -108,7 +111,7 @@ class _alpha_variance(object):
         """
         CvMom1 = (float(1)/float(self.nsubsets))*np.sum(CvJack,axis=0)               #first moments (1/self.nsubsets)
         CvMom2 = (float(1)/float(self.nsubsets))*np.sum(np.square(CvJack),axis=0)    #second moments
-        print 'CvMom1',CvMom1,'CvMom2',CvMom2
+        print('CvMom1',CvMom1,'CvMom2',CvMom2)
         return CvMom1, CvMom2
     
     def Cv_stdev(self, CvJack):
@@ -129,15 +132,15 @@ class _alpha_variance(object):
         """
         return array of Jacknife averages:    
         """
-        alphaJack = [[] for i in xrange(self.nsubsets)]
-        for i in xrange(self.nsubsets):
+        alphaJack = [[] for i in range(self.nsubsets)]
+        for i in range(self.nsubsets):
             alphaJack_tmp = copy.deepcopy(alpha_sets)
-            print 'alphaJack_tmp shape',np.shape(alphaJack_tmp) 
+            print('alphaJack_tmp shape',np.shape(alphaJack_tmp)) 
             alphaJack_tmp = np.delete(alphaJack_tmp, i, 0) 
             alphaJack_tmp =  (1. / (self.nsubsets-1)) * np.sum(alphaJack_tmp, axis=0)
-            print np.shape(alphaJack_tmp)
+            print(np.shape(alphaJack_tmp))
             alphaJack[i] = copy.deepcopy(alphaJack_tmp)
-        print np.shape(alphaJack)
+        print(np.shape(alphaJack))
         alphaJack = np.array(alphaJack)
         return alphaJack
     
@@ -146,7 +149,7 @@ class _alpha_variance(object):
         returns the M(=self.nsubsets) Cv Jackknife averages
         """
         CvJack = np.zeros((self.nsubsets, self.nT))
-        for i in xrange(self.nsubsets):
+        for i in range(self.nsubsets):
             CvJack[i][:] = compute_alpha_cv_c(self.E , np.array(alphaJack[i][:]), float(P), self.K, float(self.Tmin), float(self.Tmax), self.nT, float(self.ndof), self.live)
         #print 'CvJack ',CvJack
         return np.array(CvJack)           

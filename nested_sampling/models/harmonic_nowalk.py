@@ -1,9 +1,13 @@
 """classes and functions related to a particle in a n dimensional harmonic potential"""
+from __future__ import print_function
+from __future__ import absolute_import
 
+from builtins import range
+from builtins import object
 import numpy as np
 
 from nested_sampling.utils.result import Result
-from harmonic import vector_random_uniform_hypersphere
+from .harmonic import vector_random_uniform_hypersphere
 
 def get_random_configuration_Emax(ndim, Emax, Eground=None, kappa_sqrt=None, x0=None):
     """return a random configuration for the harmonic well with energy less than Emax
@@ -72,7 +76,7 @@ def test1():
 
 def test2():
     import matplotlib.pyplot as plt
-    from harmonic import Harmonic
+    from .harmonic import Harmonic
     n = 100
     hp = Harmonic(n)#, centre=[0.]*n, kappa=[1.]*n)
     pot = hp
@@ -80,8 +84,8 @@ def test2():
     
     coords = np.array([get_random_configuration_Emax(n, 10.) for i in range(5000)])
     energies = [pot.get_energy(x) for x in coords]
-    print coords
-    print "max energy", np.max(energies)
+    print(coords)
+    print("max energy", np.max(energies))
 #    plt.plot(vals, 'o')
     plt.hist(coords[:,0], bins=50)
     plt.show()

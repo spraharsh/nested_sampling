@@ -1,3 +1,5 @@
+from __future__ import print_function
+from builtins import range
 import unittest
 import numpy as np
 import socket
@@ -27,7 +29,7 @@ class TestNS(unittest.TestCase):
             self.dispatcher_URI = None
         
         replicas = []
-        for i in xrange(self.nreplicas):
+        for i in range(self.nreplicas):
             x = self.harmonic.get_random_configuration()
             replicas.append(Replica(x, self.harmonic.get_energy(x)))
         self.ns = NestedSampling(replicas, self.mc_runner, 
@@ -36,13 +38,13 @@ class TestNS(unittest.TestCase):
         self.Emax0 = self.ns.replicas[-1].energy
         
         self.niter = 100
-        for i in xrange(self.niter):
+        for i in range(self.niter):
             self.ns.one_iteration()
         self.Emax = self.ns.replicas[-1].energy
         self.Emin = self.ns.replicas[0].energy
     
     def test1(self):
-        print "running TestNS"
+        print("running TestNS")
         self.assert_(len(self.ns.replicas) == self.nreplicas)
         self.assert_(self.Emax < self.Emax0)
         self.assert_(self.Emin < self.Emax)

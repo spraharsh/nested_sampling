@@ -2,6 +2,7 @@ from __future__ import division, print_function, absolute_import
 
 #THIS FILE HAS BEEN ADAPTED FROM optmize.py OF SCIPY 0.12
 
+from builtins import map
 __all__ =['Result']
 
 class Result(dict):
@@ -45,9 +46,9 @@ class Result(dict):
     __delattr__ = dict.__delitem__
 
     def __repr__(self):
-        if self.keys():
-            m = max(map(len, list(self.keys()))) + 1
+        if list(self.keys()):
+            m = max(list(map(len, list(self.keys())))) + 1
             return '\n'.join([k.rjust(m) + ': ' + repr(v)
-                              for k, v in self.items()])
+                              for k, v in list(self.items())])
         else:
             return self.__class__.__name__ + "()"
