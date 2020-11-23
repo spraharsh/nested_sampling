@@ -7,7 +7,7 @@ import numpy as np
 
 #from utils._alpha_variance import run_alpha_variance
 #from utils._jackknife_variance import run_jackknife_variance
-from nested_sampling import compute_heat_capacity, get_energies 
+from nested_sampling import compute_heat_capacity, get_energies, compute_log_dos
 
 def main():   
     parser = argparse.ArgumentParser(description="load energy intervals and compute cv", 
@@ -43,6 +43,17 @@ def main():
     T, Cv, U, U2 = compute_heat_capacity(energies, K, npar=args.P, 
                                          ndof=args.ndof, Tmin=args.Tmin, Tmax=args.Tmax, 
                                          nT=args.nT, live_replicas=args.live)
+
+    # compute density of states
+    dos_log = compute_log_dos(energies, args.P, K, args.live)
+
+    import matplotlib.pyplot as plt
+    plt.plot(energies, dos_log)
+    plt.xlabel('E')
+    plt.ylabel('g(E)')
+    plt.title('Shifted g(E)')
+    plt.savefig('dos.'  + 'pdf')
+
     
     # print to cv.dat 
     with open(args.o+".dat", "w") as fout:

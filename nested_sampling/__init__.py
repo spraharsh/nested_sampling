@@ -21,6 +21,7 @@ from ._dispatcher import DispatcherQueue
 from .models.harmonic import Harmonic
 
 from .utils._heat_capacity import compute_heat_capacity
+from .utils.cv_trapezoidal import compute_dos_log_wrapper as compute_log_dos
 from .utils._jackknife_variance import run_jackknife_variance
 from .utils._alpha_variance import run_alpha_variance
 from .utils._get_energies import get_energies
