@@ -2,7 +2,7 @@ from __future__ import division
 from __future__ import print_function
 from builtins import zip
 import argparse
-from pickle import FLOAT
+from pickle import FALSE, FLOAT
 import numpy as np
 
 #from utils._alpha_variance import run_alpha_variance
@@ -19,13 +19,14 @@ def main():
     parser.add_argument("--Tmin", type=float,help="set minimum temperature for Cv evaluation (default=0.01)",default=0.01)
     parser.add_argument("--Tmax", type=float,help="set maximum temperature for Cv evaluation (default=0.5)",default=0.5)
     parser.add_argument("--nT", type=int,help="set number of temperature in the interval Tmin-Tmax at which Cv is evaluated (default=500)",default=500)
-    parser.add_argument("--ndof", type=int, help="number of degrees of freedom (default=0)", default=0)
+    parser.add_argument("--ndof", type=int, help="number of degrees of freedom (default=0)", default=4)
     parser.add_argument("--live", action="store_true", help="use live replica energies (default=False)",default=False)
     parser.add_argument("-o", type=str, default="cv", help="change the prefix of the output files")
     args = parser.parse_args()
     print(args.fname)
     print(args)
 
+    
     print("started get_energies...")
     energies = get_energies(args.fname)
     print("energies size", np.size(energies))
@@ -35,9 +36,7 @@ def main():
     K = int(args.K)
     if len(args.fname) < 2:
         assert not args.live,"cannot use live replica under any circumstances if they have not been saved, you need to add a data file with the live replicas energies"
-    
-    #make nd-arrays C contiguous # js850> this will already be the case 
-#    energies = np.array(energies, order='C')
+
     
     # do the computation
     T, Cv, U, U2 = compute_heat_capacity(energies, K, npar=args.P, 
@@ -50,9 +49,11 @@ def main():
     import matplotlib.pyplot as plt
     plt.plot(energies, dos_log)
     plt.xlabel('E')
-    plt.ylabel('g(E)')
-    plt.title('Shifted g(E)')
+    plt.ylabel('log g(E)')
+    plt.title('Log g(E)')
     plt.savefig('dos.'  + 'pdf')
+    plt.show()
+
 
     
     # print to cv.dat 

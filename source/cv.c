@@ -165,6 +165,7 @@ double heat_capacity(double* El, double* wl, int N, double T, double ndof, doubl
 
   _U /= Z;
   _U2 /= Z;
+  printf("%E, ndof", ndof);
   Cv =  (_U2 - _U*_U)*beta*beta + 0.5 * ndof;
   //printf("Z _U _U2 Cv %E %E %E %E \n",Z,_U,_U2,Cv);
   *U = _U;

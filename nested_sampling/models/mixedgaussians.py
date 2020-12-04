@@ -31,13 +31,11 @@ class MixedGausssian(object):
         assert(len(minimum_coords_list) == len(minimum_sharpness_list))
         assert(np.all(np.array(minimum_sharpness_list)>0))
         assert(np.all(np.array(minimum_depths_list)>0))
-        
         self.length = len(minimum_coords_list)
         self.minimum_coords_list = np.array(minimum_coords_list)
         self.minimum_depths_list = np.array(minimum_depths_list)
         self.minimum_sharpness_list = np.array(minimum_sharpness_list)
         self.ndim = ndim
-        
         assert(self.minimum_coords_list.shape[1] ==ndim)
 
     def get_energy(self, x):
@@ -63,7 +61,6 @@ class MixedGausssian(object):
 
         
 
-    
 
 
 

@@ -1,4 +1,6 @@
-"""classes and routines for running nested sampling"""
+"""
+classes and routines for running nested sampling
+"""
 from __future__ import print_function
 from future import standard_library
 standard_library.install_aliases()
@@ -198,6 +200,8 @@ class NestedSampling(object):
         
     def collectresults(self):
         results={}
+
+
         results_list = []
         
         while len(results) < self.nproc:
